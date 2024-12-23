@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-Time Chat</title>
+</head>
+<body>
+    <div>
+        <h2>Chat</h2>
+        <div id="chat-box" style="border: 1px solid black; height: 300px; overflow-y: auto;"></div>
+        <input type="text" id="message" placeholder="Type a message" />
+        <button id="send">Send</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
