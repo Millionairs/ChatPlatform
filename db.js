@@ -9,7 +9,11 @@ const db = new pg.Client({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
+    ssl: {
+        rejectUnauthorized: false, // Optional for RDS
+    },
 });
+
 
 db.connect();
 
