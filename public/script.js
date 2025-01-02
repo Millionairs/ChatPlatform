@@ -11,9 +11,9 @@ const receiver = prompt('Enter the name of the person you want to chat with');
 fetch(`/messages?sender=${sender}&receiver=${receiver}`)
     .then((response) => response.json())
     .then((messages) => {
-        messages.forEach(({ sender, message, timestamp }) => {
+        messages.forEach(({ sender, content, timestamp }) => {
             const messageElement = document.createElement('p');
-            messageElement.textContent = `[${sender}] ${message}`;
+            messageElement.textContent = `[${sender}] ${content}`;
             chatBox.appendChild(messageElement);
         });
     });
