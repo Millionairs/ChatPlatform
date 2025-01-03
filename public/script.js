@@ -1,4 +1,8 @@
-const socket = io();
+const socket = io({
+    auth: {
+        token: localStorage.getItem('token')
+    }
+});
 
 const chatBox = document.getElementById('chat-box');
 const messageInput = document.getElementById('message');
@@ -7,16 +11,20 @@ const sendButton = document.getElementById('send');
 const sender = prompt('Enter your name');
 const receiver = prompt('Enter the name of the person you want to chat with');
 
-// Load previous messages
-fetch(`/messages?sender=${sender}&receiver=${receiver}`)
-    .then((response) => response.json())
-    .then((messages) => {
-        messages.forEach(({ sender, content, timestamp }) => {
-            const messageElement = document.createElement('p');
-            messageElement.textContent = `[${sender}] ${content}`;
-            chatBox.appendChild(messageElement);
-        });
+// Load previous messages with authentication
+fetch(`/messages?sender=${sender}&receiver=${receiver}`, {
+    headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+})
+.then((response) => response.json())
+.then((messages) => {
+    messages.forEach(({ sender, content, timestamp }) => {
+        const messageElement = document.createElement('p');
+        messageElement.textContent = `[${sender}] ${content}`;
+        chatBox.appendChild(messageElement);
     });
+});
 
 // Handle sending messages
 sendButton.addEventListener('click', () => {
