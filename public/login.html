@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Login</title>
+</head>
+<body>
+    <div class="auth-container">
+        <form id="loginForm">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        
+        <form id="registerForm">
+            <h2>Register</h2>
+            <input type="text" id="reg-username" placeholder="Username" required>
+            <input type="password" id="reg-password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+                
+                if (response.ok) {
+                    const { token } = await response.json();
+                    localStorage.setItem('token', token);
+                    window.location.href = '/index.html';
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Login failed');
+                }
+            } catch (error) {
+                alert('Network error occurred');
+            }
+        });
+
+        // Handle registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('reg-username').value,
+                        password: document.getElementById('reg-password').value
+                    })
+                });
+                
+                if (response.ok) {
+                    const { token } = await response.json();
+                    localStorage.setItem('token', token);
+                    window.location.href = '/index.html';
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Registration failed');
+                }
+            } catch (error) {
+                alert('Network error occurred');
+            }
+        });
+    </script>
+</body>
+</html> 

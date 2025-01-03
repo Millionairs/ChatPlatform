@@ -8,11 +8,31 @@
 <body>
     <div>
         <h2>Chat</h2>
+        <button onclick="logout()">Logout</button>
         <div id="chat-box" style="border: 1px solid black; height: 300px; overflow-y: auto;"></div>
         <input type="text" id="message" placeholder="Type a message" />
         <button id="send">Send</button>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('token');
+        
+        if (typeof socket !== 'undefined') {
+            socket.disconnect();
+        }
+        
+        window.location.href = '/login.html';
+    }
+    </script>
 </body>
 </html>
