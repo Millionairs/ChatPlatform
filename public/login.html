@@ -35,8 +35,9 @@
                 });
                 
                 if (response.ok) {
-                    const { token } = await response.json();
+                    const { token, username } = await response.json();
                     localStorage.setItem('token', token);
+                    localStorage.setItem('username', username);
                     window.location.href = '/index.html';
                 } else {
                     const error = await response.json();
@@ -61,8 +62,9 @@
                 });
                 
                 if (response.ok) {
-                    const { token } = await response.json();
+                    const { token, username } = await response.json();
                     localStorage.setItem('token', token);
+                    localStorage.setItem('username', username);
                     window.location.href = '/index.html';
                 } else {
                     const error = await response.json();

@@ -18,14 +18,14 @@ const JWT_SECRET = process.env.JWT_SECRET;
 io.on('connection', (socket) => {
     console.log('A user connected');
 
-    socket.on('sendMessage', async ({ sender, receiver, message }) => {
+    socket.on('sendMessage', async ({ sender, message }) => {
         const timestamp = new Date();
         await query(
             'INSERT INTO messages (sender, receiver, content, timestamp) VALUES ($1, $2, $3, $4)',
-            [sender, receiver, message, timestamp]
+            [sender, 'broadcast', message, timestamp]
         );
 
-        io.emit('receiveMessage', { sender, receiver, message, timestamp });
+        io.emit('receiveMessage', { sender, message, timestamp });
     });
 
     socket.on('disconnect', () => {
@@ -36,10 +36,9 @@ io.on('connection', (socket) => {
 // Messages endpoint
 app.get('/messages', authenticateHttp, async (req, res) => {
     try {
-        const { sender, receiver } = req.query;
         const result = await query(
-            'SELECT * FROM messages WHERE (sender = $1 AND receiver = $2) OR (sender = $2 AND receiver = $1) ORDER BY timestamp ASC',
-            [sender, receiver]
+            'SELECT * FROM messages WHERE receiver = $1 ORDER BY timestamp ASC',
+            ['broadcast']
         );
         res.json(result.rows);
     } catch (error) {
