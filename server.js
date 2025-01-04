@@ -3,6 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { query, createUser, verifyUser } from './db.js';
 import jwt from 'jsonwebtoken';
+import { authenticateHttp, authenticateWs } from './auth/authMiddleware.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -31,23 +32,6 @@ io.on('connection', (socket) => {
         console.log('A user disconnected');
     });
 });
-
-// Middleware to verify JWT for HTTP requests
-const authenticateHttp = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    
-    if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
-    }
-    
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.userId = decoded.userId;
-        next();
-    } catch (err) {
-        res.status(401).json({ error: 'Invalid token' });
-    }
-};
 
 // Messages endpoint
 app.get('/messages', authenticateHttp, async (req, res) => {
@@ -89,21 +73,7 @@ app.post('/api/login', async (req, res) => {
     res.json({ token, username: user.username });
 });
 
-// WebSocket authentication
-const authenticateWs = (socket, next) => {
-    const token = socket.handshake.auth.token;
-    if (!token) {
-        return next(new Error('Authentication required'));
-    }
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        socket.userId = decoded.userId;
-        next();
-    } catch (err) {
-        next(new Error('Invalid token'));
-    }
-};
-
+// Apply WebSocket authentication middleware
 io.use(authenticateWs);
 
 const PORT = 3000;
