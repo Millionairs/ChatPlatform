@@ -38,7 +38,7 @@
                     const { token, username } = await response.json();
                     localStorage.setItem('token', token);
                     localStorage.setItem('username', username);
-                    window.location.href = '/index.html';
+                    window.location.href = '/users.html';
                 } else {
                     const error = await response.json();
                     alert(error.error || 'Login failed');
@@ -65,7 +65,7 @@
                     const { token, username } = await response.json();
                     localStorage.setItem('token', token);
                     localStorage.setItem('username', username);
-                    window.location.href = '/index.html';
+                    window.location.href = '/users.html';
                 } else {
                     const error = await response.json();
                     alert(error.error || 'Registration failed');
