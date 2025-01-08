@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { query, createUser, verifyUser } from './db.js';
 import jwt from 'jsonwebtoken';
 import { authenticateHttp, authenticateWs } from './auth/authMiddleware.js';
+import e from 'express';
 
 const app = express();
 const server = http.createServer(app);
@@ -74,6 +75,31 @@ app.post('/api/login', async (req, res) => {
 
 // Apply WebSocket authentication middleware
 io.use(authenticateWs);
+
+// Fetch all users except the logged-in user
+app.post('/api/users', authenticateHttp, async (req, res) => {
+
+    const username = await req.body.username; 
+    const userId = req.userId;
+    console.log(username);
+    try {
+        console.log('Fetching users');
+        console.log(username)
+        const result = await query(
+            'SELECT * FROM users WHERE id != $1',
+            [userId]
+        );
+        await res.json(result.rows);
+        console.log('Users fetched');
+        console.log("server user result "+ result.rows);
+    } catch (error) {
+        console.log(error.message);
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Failed to fetch users', errorMessage: error.message });
+    }
+});
+
+
 
 const PORT = 3000;
 server.listen(PORT, '0.0.0.0', () => {
