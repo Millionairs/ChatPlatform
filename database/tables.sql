@@ -24,3 +24,22 @@ CREATE TABLE sessions (
     expires_at TIMESTAMP NOT NULL
 );
 
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP,
+    all_day BOOLEAN DEFAULT FALSE,
+    color VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+);
+
+CREATE TABLE event_user_links (
+    id SERIAL PRIMARY KEY, 
+    event_id INT REFERENCES events(id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (event_id, user_id)
+);
+
