@@ -10,11 +10,18 @@ const sendButton = document.getElementById('send');
 
 const sender = localStorage.getItem('username');
 
+const receiverId = localStorage.getItem('chatReceiverId');
+const receiver = localStorage.getItem('receiverName');
+// Display the chat receiver's name
+//document.getElementById('chat-receiver').textContent = `Chat with ${receiverUsername}`;
+
+
 // Load previous messages with authentication
-fetch(`/messages`, {
-    headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-    }
+fetch(`/messages?receiver=${receiver}`, {
+    method: 'POST', 
+    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json' },
+    body: JSON.stringify({ sender: localStorage.getItem('username') })
 })
 .then((response) => response.json())
 .then((messages) => {
@@ -44,7 +51,8 @@ sendButton.addEventListener('click', () => {
         alert('Cannot send an empty message.');
         return;
     }
-    socket.emit('sendMessage', { sender, message });
+    
+    socket.emit('sendMessage', { sender, message, receiver});
     messageInput.value = '';
 });
 
@@ -65,6 +73,8 @@ socket.on('receiveMessage', ({ sender: msgSender, message, fileUrl }) => {
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
 });
+
+
 
 //Handle file uploads
 document.getElementById('upload-form').addEventListener('submit', async (e) => {
