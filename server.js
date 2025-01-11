@@ -1,7 +1,8 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-import { query, createUser, verifyUser } from './db.js';
+import { query } from './database/index.js';
+import { createUser, verifyUser } from './database/user.js';
 import jwt from 'jsonwebtoken';
 import { authenticateHttp, authenticateWs } from './auth/authMiddleware.js';
 import e from 'express';
@@ -9,6 +10,7 @@ import multer from 'multer';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import eventsRouter from './routes/event.js';
 
 dotenv.config();
 
@@ -28,6 +30,9 @@ const s3Client = new S3Client({
 
 app.use(express.static('public'));
 app.use(express.json());
+
+// Mounting events router
+app.use('/api/events', eventsRouter);
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -155,9 +160,6 @@ app.post('/api/users', authenticateHttp, async (req, res) => {
     }
 });
 
-
-
-const PORT = 3000;
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(process.env.PORT, process.env.HOST, () => {
     console.log('Server is running on http://0.0.0.0:3000');
 });

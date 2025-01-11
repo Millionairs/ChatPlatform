@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <title>Calendar for Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./calendar-styles.css" />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+    <script src="./calendar/calendar.js" type="module"></script>
+    <script src="./calendar/dateHandler.js" type="module"></script>
+    <script src="./calendar/eventActions.js" type="module"></script>
+    <script src="./calendar/eventHandler.js" type="module"></script>
+    <script src="./calendar/formModal.js" type="module"></script>
+  </head>
+  <body>
+    <div id='calendar'></div>
+    <button onclick="window.location.href='../index.html'">Back to Chat</button>
+    <button id="addEventButton">Add Event</button>
+
+    <!-- Overlay and Form -->
+    <div id="overlay"></div>
+    <div id="eventForm">
+      <h2>Create Event</h2>
+      <label for="eventTitle">Title:</label>
+      <input type="text" id="eventTitle" required><br><br>
+
+      <label for="eventDescription">Description:</label>
+      <textarea id="eventDescription" required></textarea><br><br>
+
+      <label for="eventDate">Date:</label>
+      <input type="date" id="eventDate" required><br><br>
+
+      <label for="startTime">Start Time:</label>
+      <input type="time" id="startTime"><br><br>
+
+      <label for="endTime">End Time:</label>
+      <input type="time" id="endTime"><br><br>
+
+      <label for="allDay">All Day Event:</label>
+      <input type="checkbox" id="allDay"><br><br>
+
+      <!-- for Colour -->
+
+      <label for="eventColor">Event Color:</label><br>
+      <input type="radio" id="colorRed" name="eventColor" value="red">
+      <label for="colorRed" style="color: red;">Red</label><br>
+    
+      <input type="radio" id="colorBlue" name="eventColor" value="blue">
+      <label for="colorBlue" style="color: blue;">Blue</label><br>
+    
+      <input type="radio" id="colorGreen" name="eventColor" value="green">
+      <label for="colorGreen" style="color: green;">Green</label><br>
+    
+      <input type="radio" id="colorYellow" name="eventColor" value="yellow">
+      <label for="colorYellow" style="color: yellow;">Yellow</label><br>
+    
+      <input type="radio" id="colorPurple" name="eventColor" value="purple">
+      <label for="colorPurple" style="color: purple;">Purple</label><br><br>
+
+      <button id="addEventConfirm">Add Event</button>
+      <button id="cancelEventForm">Cancel</button>
+    </div>
+
+    <div id="event-modal" class="event-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modal-title"></h3>
+            <p><strong>Start:</strong> <span id="modal-start"></span></p>
+            <p><strong>End:</strong> <span id="modal-end"></span></p>
+            <p><strong>Description:</strong> <span id="modal-description"></span></p>
+            <div class="modal-actions">
+                <button id="edit-event-btn">Edit</button>
+                <button id="delete-event-btn" class="danger">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="./calendar/calendar.js" type="module"></script>
+    <script src="./calendar/dateHandler.js" type="module"></script>
+    <script src="./calendar/eventActions.js" type="module"></script>
+    <script src="./calendar/eventHandler.js" type="module"></script>
+    <script src="./calendar/formModal.js" type="module"></script>
+    <script type="module">
+        import { openEventForm, closeEventForm } from './calendar/formModal.js';
+        import { addEvent } from './calendar/eventActions.js';
+      
+        document.getElementById('addEventButton').addEventListener('click', openEventForm);
+        document.getElementById('overlay').addEventListener('click', closeEventForm);
+        document.getElementById('cancelEventForm').addEventListener('click', closeEventForm);
+        document.getElementById('addEventConfirm').addEventListener('click', addEvent);
+    </script>
+
+  </body>
+</html>
