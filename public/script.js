@@ -27,9 +27,16 @@ fetch(`/messages?receiver=${receiver}`, {
 .then((messages) => {
     messages.forEach(({ sender, content, file_url }) => {
         const messageElement = document.createElement('p');
+        messageElement.classList.add('message');
 
         if (content) {
-            messageElement.textContent = `[${sender}] ${content}`;
+            if (sender === localStorage.getItem('username')) {
+                messageElement.textContent = `[${sender}] ${content}`;
+                messageElement.classList.add('userMessage');
+            } else {
+                messageElement.textContent = `[${sender}] ${content}`;
+                messageElement.classList.add('receiverMessage');
+            }
         } else if (file_url) {
             const fileLink = document.createElement('a');
             fileLink.href = file_url;
@@ -37,6 +44,12 @@ fetch(`/messages?receiver=${receiver}`, {
             fileLink.target = '_blank';
             messageElement.textContent = `[${sender}] `;
             messageElement.appendChild(fileLink);
+
+            if (sender === localStorage.getItem('username')) {
+                messageElement.classList.add('userMessage');
+            } else {
+                messageElement.classList.add('receiverMessage');
+            }
         }
 
         chatBox.appendChild(messageElement);
