@@ -40,14 +40,20 @@ const JWT_SECRET = process.env.JWT_SECRET;
 io.on('connection', (socket) => {
     console.log('A user connected');
 
-    socket.on('sendMessage', async ({ sender, message }) => {
+    socket.on('sendMessage', async ({ sender, message, receiver }) => {
         const timestamp = new Date();
         await query(
             'INSERT INTO messages (sender, receiver, content, timestamp) VALUES ($1, $2, $3, $4)',
-            [sender, 'broadcast', message, timestamp]
+            [sender, receiver, message, timestamp]
         );
 
-        io.emit('receiveMessage', { sender, message, timestamp });
+        // Emit only to the receiver and sender
+        io.to(receiver).emit('receiveMessage', { sender, message, timestamp });
+        socket.emit('receiveMessage', { sender, message, timestamp });
+    });
+
+    socket.on('joinRoom', (userId) => {
+        socket.join(userId); // Join a room based on the user's ID
     });
 
     socket.on('disconnect', () => {
@@ -56,11 +62,16 @@ io.on('connection', (socket) => {
 });
 
 // Messages endpoint
-app.get('/messages', authenticateHttp, async (req, res) => {
+app.post('/messages', authenticateHttp, async (req, res) => {
+    const { receiver } = req.query;
+    const { sender } = req.body;
+    console.log('Fetching messages');
+    console.log(sender);
+    console.log(receiver);
     try {
         const result = await query(
-            'SELECT * FROM messages WHERE receiver = $1 ORDER BY timestamp ASC',
-            ['broadcast']
+            'SELECT * FROM messages WHERE (sender = $1 AND receiver = $2) OR (sender = $2 AND receiver = $1) ORDER BY timestamp ASC',
+            [sender, receiver]
         );
         res.json(result.rows);
     } catch (error) {
@@ -125,11 +136,11 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     const user = await verifyUser(username, password);
-    
+
     if (!user) {
         return res.status(401).json({ error: 'Invalid credentials' });
     }
-    
+
     const token = jwt.sign({ userId: user.id }, JWT_SECRET);
     res.json({ token, username: user.username });
 });
@@ -140,7 +151,7 @@ io.use(authenticateWs);
 // Fetch all users except the logged-in user
 app.post('/api/users', authenticateHttp, async (req, res) => {
 
-    const username = await req.body.username; 
+    const username = await req.body.username;
     const userId = req.userId;
     console.log(username);
     try {
@@ -152,7 +163,7 @@ app.post('/api/users', authenticateHttp, async (req, res) => {
         );
         await res.json(result.rows);
         console.log('Users fetched');
-        console.log("server user result "+ result.rows);
+        console.log("server user result " + result.rows);
     } catch (error) {
         console.log(error.message);
         console.error('Error fetching users:', error);
