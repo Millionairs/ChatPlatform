@@ -8,8 +8,8 @@ body {
 }
 
 #chat-box {
-    max-width: 900px;
-    margin: 10px auto;
+    max-width: 1400px;
+    margin: 10px 50px; /* Center horizontally */
     padding: 10px;
     background-color: #FFFFFF; /* White for contrast */
     border-radius: 10px;
@@ -18,9 +18,13 @@ body {
     flex-direction: column; /* Arrange children in a column */
 }
 
+#message-box {
+    margin: 10px 50px 10px 50px; /* Add margin-right */
+    max-width: 1400px; /* Make the element follow the size of the window */
+}
 .message {
     display: block;
-    margin: 10px 0;
+    margin: 10px 20px;
     padding: 10px;
     border-radius: 8px;
     max-width: 70%; /* Limit the width of the message bubbles */
