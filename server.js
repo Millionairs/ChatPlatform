@@ -124,7 +124,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await createUser(username, password);
+        const user = await createUser(username, password, 'user');
         const token = jwt.sign({ userId: user.id }, JWT_SECRET);
         res.json({ token, username: user.username });
     } catch (error) {
